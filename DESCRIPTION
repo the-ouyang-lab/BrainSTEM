@@ -1,0 +1,10 @@
+Package: BrainSTEM
+Type: Package
+Title: Brain Single-cell Two tiEr Mapping
+Version: 0.1.0
+Author: Lisheng Xu, John F. Ouyang
+Maintainer: John F. Ouyang <john.ouyang@duke-nus.edu.sg>
+Description: R Package for accessing the transcriptional fidelity of midbrain cultures via scRNA-seq
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
