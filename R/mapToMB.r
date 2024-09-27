@@ -2,11 +2,11 @@
 #' 
 #' Map query dataset to the fetal midbrain subatlas
 #' 
-#' @param seuMBRef The Seurat object of the fetal midbrain subatlas, usually downloaded by function downloadMBref()
+#' @param seuMBRef The Seurat object of the fetal midbrain subatlas, usually downloaded by function \code{downloadMBref()}
 #' @param seuQuery The Seurat object of the query dataset, with log-normalised data and PC calculated, 
 #' which has been mapped to the fetal whole brain atlas and contains predicted.reg.celltype.major in the metadata
 #' @param min.nCell Minimal count of midbrain cells according to the first-tier mapping in seuQuery to allow it 
-#' to be mapped by mapToMB()
+#' to be mapped by \code{mapToMB()}
 #' @param returnAnchor Logical. Setting it to TRUE allows the transfer anchors to be returned
 #' 
 #' @return A modified query Seurat object containing:
@@ -54,6 +54,10 @@ mapToMB <- function(seuMBRef, seuQuery, min.nCell = 1000,returnAnchor = FALSE){
   
   
   # return value
+  seuQuery@meta.data[["predicted.MB.celltype"]] <- factor(seuQuery@meta.data[["predicted.MB.celltype"]], levels = c("hDA", "hDA.STN", "hNProg.DA", "hRN", "hNProg.DARN", 
+                                                                                                                    "hvGaba", "hNProg.vGaba", "hdGaba", "hNProg.dGaba",  "hNProg.Gaba", 
+                                                                                                                    "hGlu", "hNProg.Glu", "hOMTN", "hSert",   
+                                                                                                                    "hOPC", "hProg", "hRgl"))
   if (returnAnchor){
     return(list(seuQuery, anchors))
   } else{

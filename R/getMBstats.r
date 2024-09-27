@@ -4,7 +4,6 @@
 #' 
 #' @param seu Modified query Seurat object from mapToMB().
 #' @param group.by Name of one metadata columns to group cells by. Factor required.
-#' @param nSample 
 #' 
 #' @return A data table of 154 rows. Each column corresponds to one group specified by group.by. 
 #' Row 1-17 detail midbrain celltype proportion
@@ -26,9 +25,6 @@ getMBstats <- function(seu, group.by){
   
   seu@meta.data[["group"]] <- factor(seu@meta.data[[group.by]])
   seuMeta <- seu@meta.data
-  
-  
-  if (length(seuMeta$cellID != 0)){seuMeta$cellID.backup <- seuMeta$cellID;seuMeta$cellID <- NULL}
   seuMeta <- data.table(cellID = rownames(seuMeta), seuMeta)
   # Part 1: get MB celltype
   oup1 <- as.matrix(table(seuMeta$predicted.MB.celltype, seuMeta$group))
@@ -57,8 +53,8 @@ getMBstats <- function(seu, group.by){
                           replace = TRUE)
   }
   # Part 5: calculate corr with mannoProp
-  # mannoProp <- fread(system.file("extdata", "mannoProp.txt", package = "BrainSTEM"))
-  mannoProp <- fread("atlas/mannoProp.csv")
+  mannoProp <- read.csv(system.file("extdata", "mannoProp.csv", package = "BrainSTEM"), row.name = 1)
+  mannoProp <- as.matrix(mannoProp)
   oup5 <- cor(mannoProp, oup1) # predicted.MB.celltype needs to be factorised
   # Part 6: calculate NES with marker genes
   inpFC = data.table()
@@ -75,8 +71,9 @@ getMBstats <- function(seu, group.by){
   inpFC$group = factor(inpFC$group, levels = levels(seu$group))
   inpFC$celltype = factor(inpFC$celltype, levels = levels(seu$predicted.MB.celltype))
   
-  # markers <- fread(system.file("extdata", "celltypeMarkers.csv", package = "BrainSTEM"))
-  markers <- fread("atlas/celltypeMarkers.csv")
+  markers <- fread(system.file("extdata", "celltypeMarkers.csv", package = "BrainSTEM"))
+  markers$cluster <- factor(markers$cluster, levels = unique(markers$cluster))
+  markers$V1 <- NULL
   oup6 <- matrix(nrow = uniqueN(markers$cluster), ncol = ncol(oup1))
   rownames(oup6) <- levels(markers$cluster)
   colnames(oup6) <- colnames(oup1)

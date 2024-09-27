@@ -2,7 +2,7 @@
 #' 
 #' Map query dataset to the fetal whole brain atlas
 #' 
-#' @param seuWBRef The Seurat object of the fetal whole brain atlas, usually downloaded by function downloadWBref()
+#' @param seuWBRef The Seurat object of the fetal whole brain atlas, usually downloaded by function \code{downloadWBref()}
 #' @param seuQuery The Seurat object of the query dataset, with log-normalised data and PC calculated
 #' @param returnAnchor Logical. Setting it to TRUE allows the transfer anchors to be returned
 #' 
@@ -91,6 +91,15 @@ mapToWB <- function(seuWBRef, seuQuery, returnAnchor = FALSE){
   
   # return value
   seuQuery <- AddMetaData(seuQuery, metadata = tmpMeta[,c("is.assigned", "predicted.reg.celltype", "predicted.reg.celltype.major")])
+  seuQuery@meta.data[["is.assigned"]] <- factor(seuQuery@meta.data[["is.assigned"]], levels = c("assigned", "unassigned"))
+  seuQuery@meta.data[["predicted.celltype"]] <- factor(seuQuery@meta.data[["predicted.celltype"]], levels = c("DA N", "Cholin N", "GABA N", "Glu N", "Ser N", 
+                                                                                                              "CA10+TFAP2B+ N", "FSTL4+RELN+ N",  "LHX2+LHX9+ N", "LHX5+OTP+ N", "SIM1+PITX2+ N", 
+                                                                                                              "Radial Glia", "Neuroblast", "Oligo", "Neural Crest", "Glioblast", 
+                                                                                                              "Epithelium", "Mesoderm", "LPM", "Endothelium", "Blood", "Immune", "Notochord", "Endoderm"))
+  seuQuery@meta.data[["predicted.reg.celltype.major"]] <- factor(seuQuery@meta.data[["predicted.reg.celltype.major"]], levels = c("Midbrain.Neuron", "Midbrain.Prog", 
+                                                                                                                                  "Forebrain.Neuron", "Forebrain.Prog", 
+                                                                                                                                  "Hindbrain.Neuron", "Hindbrain.Prog", 
+                                                                                                                                  "NRS.Neuron", "NRS.Prog", "nonNeural", "unassigned"))
   if (isTRUE(returnAnchor)){
     return(list(seuQuery, anchors))
   } else{
