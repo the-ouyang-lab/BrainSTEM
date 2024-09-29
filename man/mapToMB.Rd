@@ -7,26 +7,34 @@
 mapToMB(seuMBRef, seuQuery, min.nCell = 1000, returnAnchor = FALSE)
 }
 \arguments{
-\item{seuMBRef}{The Seurat object of the fetal midbrain subatlas, usually downloaded by function \code{downloadMBref()}}
+\item{seuMBRef}{The Seurat object of the fetal midbrain subatlas, usually
+downloaded by function \code{downloadMBref()}}
 
-\item{seuQuery}{The Seurat object of the query dataset, with log-normalised data and PC calculated, 
-which has been mapped to the fetal whole brain atlas and contains predicted.reg.celltype.major in the metadata}
+\item{seuQuery}{The Seurat object of the query dataset, with log-normalised
+data and PC calculated. This Seurat object should already have been mapped
+to the fetal whole brain atlas using \code{mapToWB()} and contains
+predicted.reg.celltype.major in the metadata}
 
-\item{min.nCell}{Minimal count of midbrain cells according to the first-tier mapping in seuQuery to allow it 
-to be mapped by \code{mapToMB()}}
+\item{min.nCell}{Minimal count of midbrain cells according to the first-tier
+mapping in seuQuery to allow for second tier mapping by \code{mapToMB()}}
 
-\item{returnAnchor}{Logical. Setting it to TRUE allows the transfer anchors to be returned}
+\item{returnAnchor}{Logical. Setting it to TRUE allows the transfer anchors
+to be returned}
 }
 \value{
-A modified query Seurat object containing:
-new assay corresponding to predicted.MB.celltype
-an integrated reduction
-a projected UMAP reduction 
-new columns in the metadata: predicted.MB.celltype, predicted.MB.celltype.score and predicted.ventralScore. 
-If returnAnchor is set to TRUE, a list containing such Seurat object and the transfer anchors is returned.
+A modified query Seurat object containing (i) an projected PCA
+  reduction, (ii) projected UMAP coordinates, (iii) new assay corresponding
+  to predicted.MB.celltype probabilities and (iv) new columns in the
+  metadata: predicted.MB.celltype, predicted.MB.celltype.score and
+  predicted.ventralScore.
+  If returnAnchor is set to TRUE, a list containing such Seurat object and
+  the transfer anchors is returned.
 }
 \description{
-Map query dataset to the fetal midbrain subatlas
+Wrapper function to map a query dataset onto the fetal midbrain subatlas.
+This function uses the Seurat algorithm to project the query dataset onto
+the reference. Upon projection, the midbrain detailed celltype annotation is
+predicted. Furthermore, a ventral score is predicted for each single cell.
 }
 \author{
 Lisheng Xu

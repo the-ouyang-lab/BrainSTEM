@@ -1,21 +1,21 @@
 Package: BrainSTEM
 Type: Package
 Title: Brain Single-cell Two tiEr Mapping
-Version: 0.1.0
+Version: 0.2.0
 Author: Lisheng Xu, John F. Ouyang
 Maintainer: John F. Ouyang <john.ouyang@duke-nus.edu.sg>
 Description: R Package for accessing the transcriptional fidelity of midbrain cultures via scRNA-seq
 License: GPL-3
 Depends: 
-  Seurat,
-  data.table,
-  dplyr,
-  Matrix,
-  ranger,
-  clusterProfiler,
-  circlize,
-  viridis,
-  ComplexHeatmap
+  Seurat     (>= 5.0.0),
+  data.table (>= 1.15.4),
+  dplyr      (>= 1.1.4),
+  Matrix     (>= 1.7-0),
+  ranger     (>= 0.16.0),
+  circlize   (>= 0.4.16),
+  viridis    (>= 0.6.5),
+  clusterProfiler (>= 4.12.0),
+  ComplexHeatmap  (>= 2.20.0)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1

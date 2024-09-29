@@ -7,22 +7,34 @@
 mapToWB(seuWBRef, seuQuery, returnAnchor = FALSE)
 }
 \arguments{
-\item{seuWBRef}{The Seurat object of the fetal whole brain atlas, usually downloaded by function \code{downloadWBref()}}
+\item{seuWBRef}{The Seurat object of the fetal whole brain atlas, usually
+downloaded by function \code{downloadWBref()}}
 
-\item{seuQuery}{The Seurat object of the query dataset, with log-normalised data and PC calculated}
+\item{seuQuery}{The Seurat object of the query dataset, with log-normalised
+data and PC calculated}
 
-\item{returnAnchor}{Logical. Setting it to TRUE allows the transfer anchors to be returned}
+\item{returnAnchor}{Logical. Setting it to TRUE allows the transfer anchors
+to be returned}
 }
 \value{
-A modified query Seurat object containing:
-new assay corresponding to predicted.celltype
-an integrated reduction
-a projected UMAP reduction 
-new columns in the metadata: is.assigned, predicted.celltype, predicted.reg.celltype, predicted.reg.celltype.major and multiple scores. 
-If returnAnchor is set to TRUE, a list containing such Seurat object and the transfer anchors is returned.
+A modified query Seurat object containing (i) an projected PCA
+  reduction, (ii) projected UMAP coordinates, (iii) new assay corresponding
+  to predicted.celltype probabilities and (iv) new columns in the metadata:
+  is.assigned, predicted.celltype, predicted.reg.celltype,
+  predicted.reg.celltype.major and multiple scores.
+  If returnAnchor is set to TRUE, a list containing such Seurat object and
+  the transfer anchors is returned.
 }
 \description{
-Map query dataset to the fetal whole brain atlas
+Wrapper function to map a query dataset onto the fetal whole brain atlas.
+This function uses the Seurat algorithm to project the query dataset onto
+the reference. Upon projection, the whole brain celltype annotation is then
+predicted and the corresponding celltype's marker gene module score is
+calculated. Cells with a low gene module score are deemed to be not
+confidently assigned. The remaining confidently assigned cells are then
+split into region-specific and non-region-specific cell types and the brain
+region is then determed for the former celltypes using brain region marker
+gene module score.
 }
 \author{
 Lisheng Xu

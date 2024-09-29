@@ -1,18 +1,19 @@
-# Hello, world!
+# Function to download fetal midbrain subatlas
 #
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
+# Function to download the seurat object containing fetal midbrain subatlas
 #
-# You can learn more about package authoring with RStudio at:
-#
-#   https://r-pkgs.org
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
+#' @param filename filename of downloaded seurat object
+#'
+#' @return seurat object of fetal midbrain subatlas downloaded as filename
+#'
+#' @author John F. Ouyang
+#'
+#' @export
 
-downloadMBref <- function() {
-  print("Hello, world!")
+
+
+downloadMBref <- function(filename) {
+  stop("Error: Currently, seurat objects are only available for reviewing purposes!")
 }
+
+
