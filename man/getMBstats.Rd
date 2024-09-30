@@ -2,17 +2,17 @@
 % Please edit documentation in R/getMBstats.r
 \name{getMBstats}
 \alias{getMBstats}
-\title{Calculate statistics for the second-tier mapping}
+\title{Calculate statistics for the second-tier projection}
 \usage{
 getMBstats(seu, group.by)
 }
 \arguments{
-\item{seu}{Modified query Seurat object from mapToMB().}
+\item{seu}{Modified query Seurat object from \code{mapToMB()}.}
 
-\item{group.by}{Name of one metadata columns to group cells by. Factor required.}
+\item{group.by}{Name of one metadata column to group cells by.}
 }
 \value{
-A data table of 154 rows. Each column corresponds to one group specified by group.by. 
+A matrix of 154 rows. Each column corresponds to one group specified by group.by. 
 Row 1-17 detail midbrain celltype proportion
 Row 18-23 detail midbrain progenitor proportion
 Row 24-31 detail midbrain neuron proportion
@@ -21,7 +21,7 @@ Row 132-137 detail the correlation between midbrain celltype proportion of curre
 Row 138-152 detail midbrain celltype identity NES
 }
 \description{
-Calculate statistics for the second-tier mapping
+Calculate statistics for the second-tier projection
 }
 \author{
 Lisheng Xu

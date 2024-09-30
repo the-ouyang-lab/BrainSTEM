@@ -1,11 +1,11 @@
-#' Calculate statistics for the second-tier mapping
+#' Calculate statistics for the second-tier projection
 #' 
-#' Calculate statistics for the second-tier mapping
+#' Calculate statistics for the second-tier projection
 #' 
-#' @param seu Modified query Seurat object from mapToMB().
-#' @param group.by Name of one metadata columns to group cells by. Factor required.
+#' @param seu Modified query Seurat object from \code{mapToMB()}.
+#' @param group.by Name of one metadata column to group cells by.
 #' 
-#' @return A data table of 154 rows. Each column corresponds to one group specified by group.by. 
+#' @return A matrix of 154 rows. Each column corresponds to one group specified by group.by. 
 #' Row 1-17 detail midbrain celltype proportion
 #' Row 18-23 detail midbrain progenitor proportion
 #' Row 24-31 detail midbrain neuron proportion
@@ -16,6 +16,7 @@
 #' @author Lisheng Xu
 #' 
 #' @import Seurat
+#' @import Matrix
 #' @import dplyr
 #' @import data.table
 #' @import clusterProfiler

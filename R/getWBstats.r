@@ -1,4 +1,26 @@
-getWBstats <- function(seuMeta, group.by){
+#' Calculate statistics for the first-tier mapping
+#' 
+#' Calculate statistics for the first-tier mapping
+#' 
+#' @param seu Modified query Seurat object from \code{mapToMB()}.
+#' @param group.by Name of one metadata column to group cells by.
+#' 
+#' @return A matrix of 37 rows. Each column corresponds to one group specified by group.by. 
+#' Row 1-2 detail the proportion of confidently assigned and unassigned cells from the first-tier mapping
+#' Row 3-11 detail the region.lineage proportions for confidently assigned cells
+#' Row 12-34 detail the cell type proportions for confidently assigned cells
+#' Row 35-37 detail the brain region proportions for confidently assigned DA neurons
+#' 
+#' @author Lisheng Xu
+#' 
+#' @import Seurat
+#' @import Matrix
+#' @import dplyr
+#' @import data.table
+#' @export
+
+getWBstats <- function(seu, group.by){
+  seuMeta <- seu@meta.data
   seuMeta[["group"]] <- factor(seuMeta[[group.by]])
   seuMeta <- data.table(cellID = rownames(seuMeta), seuMeta)
   # Part 1: get unassigned assigned
@@ -20,7 +42,8 @@ getWBstats <- function(seuMeta, group.by){
   # Part 4: get DA region
   oup4 <- seuMeta[is.assigned == "assigned"]
   oup4 <- oup4[predicted.celltype == "DA N"]
-  oup4[["predicted.reg.celltype.major"]] <- factor(oup4[["predicted.reg.celltype.major"]], levels = c("Midbrain.Neuron", "Forebrain.Neuron", "Hindbrain.Neuron"))
+  oup4[["predicted.reg.celltype.major"]] <- factor(oup4[["predicted.reg.celltype.major"]], levels = c(
+    "Midbrain.Neuron", "Forebrain.Neuron", "Hindbrain.Neuron"))
   oup4 <- as.matrix(table(oup4$predicted.reg.celltype.major, oup4$group))
   rownames(oup4) <- c("Midbrain.DA N", "Forebrain.DA N", "Hindbrain.DA N")
   oup4 <- t(t(oup4) / colSums(oup4))   #  Normalise to colsum=1

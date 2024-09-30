@@ -17,23 +17,31 @@ seuRefMB <- readRDS("path-to-midbrain-subatlas.rds")
 
 
 # Run BrainSTEM on La Manno 2016
-seuQueryManno <- readRDS("path-to-lamanno2016.rds")
+seuQueryManno <- readRDS("manno.rds")
 seuQueryManno <- mapToWB(seuQueryManno)
-seuQueryManno <- mapToMB(seuQueryManno, min.nCell = 100)
-seuQueryManno <- getWBstat(seuQueryManno, group.by = "Timepoint")
-seuQueryManno <- getMBstat(seuQueryManno, group.by = "Timepoint")
-plotWBstat(seuQueryManno)
-plotMBstat(seuQueryManno)
+seuQueryManno <- mapToMB(seuQueryManno, min.nCell = 0)
+seuQueryMannoWBstats <- getWBstats(seuQueryManno, group.by = "timepoint")
+seuQueryMannoMBstats <- getMBstats(seuQueryManno, group.by = "timepoint")
+plotWBstats(seuQueryMannoWBstats)
+plotMBstats(seuQueryMannoMBstats)
+
+# Save plots
+pdf(width = 6, height = 8.2, bg = "transparent", file = "plotMannoWBstats.pdf")
+plotWBstats(seuQueryMannoWBstats)
+dev.off()
+pdf(width = 6, height = 12, bg = "transparent", file = "plotMannoMBstats.pdf")
+plotMBstats(seuQueryMannoMBstats.MB)
+dev.off()
 
 
 # Run BrainSTEM on in-house midbrain differentiation dataset
-seuQueryToh <- readRDS("path-to-inhousedata.rds")
+seuQueryToh <- readRDS("toh.inhouse.rds")
 seuQueryToh <- mapToWB(seuQueryToh)
 seuQueryToh <- mapToMB(seuQueryToh)
-seuQueryToh <- getWBstat(seuQueryToh, group.by = "group")
-seuQueryToh <- getMBstat(seuQueryToh, group.by = "group")
-plotWBstat(seuQueryToh)
-plotMBstat(seuQueryToh)
+seuQueryTohWBstats <- getWBstats(seuQueryToh, group.by = "timepoint")
+seuQueryTohMBstats <- getMBstats(seuQueryToh, group.by = "timepoint")
+plotWBstat(seuQueryTohWBstats)
+plotMBstat(seuQueryTohMBstats)
 ```
 
 
