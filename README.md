@@ -30,7 +30,7 @@ pdf(width = 6, height = 8.2, bg = "transparent", file = "plotMannoWBstats.pdf")
 plotWBstats(seuQueryMannoWBstats)
 dev.off()
 pdf(width = 6, height = 12, bg = "transparent", file = "plotMannoMBstats.pdf")
-plotMBstats(seuQueryMannoMBstats.MB)
+plotMBstats(seuQueryMannoMBstats)
 dev.off()
 
 
