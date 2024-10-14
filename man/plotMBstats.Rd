@@ -4,10 +4,18 @@
 \alias{plotMBstats}
 \title{Plot statistics for the second-tier projection using \code{ComplexHeatmap}}
 \usage{
-plotMBstats(inpMat, no.legend = FALSE)
+plotMBstats(inpMat, plot = c(1, 2, 3, 4, 5, 6), no.legend = FALSE)
 }
 \arguments{
-\item{inpMat}{A matrix from \code{getMBstats()}.}
+\item{inpMat}{A matrix from \code{getMBstats()}}
+
+\item{plot}{blocks of the plots to be printed, i.e. c(1,2,3,4,5,6)
+1: midbrain celltype proportion
+2: midbrain progenitor proportion
+3: midbrain neuron proportion
+4: ventral score
+5: the correlation between midbrain celltype proportion of current query dataset and that reported by La Manno 2016
+6: midbrain celltype identity NES}
 
 \item{no.legend}{If true, a heatmap without legend is returned}
 }

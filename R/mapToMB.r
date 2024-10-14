@@ -38,7 +38,7 @@ mapToMB <- function(seuMBRef, seuQuery, min.nCell = 1000, returnAnchor = FALSE){
 
   if(nrow(seuQuery@meta.data[seuQuery@meta.data[["predicted.reg.celltype.major"]] %in% c(
     "Midbrain.Neuron", "Midbrain.Prog"),]) < min.nCell){
-    stop(paste0("Aborted: The query must contain not fewer than ", min.nCell, " midbrain cells."))
+    stop(paste0("The query must contain not fewer than ", min.nCell, " midbrain cells, or please adjust \"min.nCell\" (default value 1000)."))
   }
   # - Step1: Filter out midbrain neural cells
   # --- Uses predicted.reg.celltype.major

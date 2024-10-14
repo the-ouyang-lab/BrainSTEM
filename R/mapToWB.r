@@ -34,15 +34,18 @@
 
 
 mapToWB <- function(seuWBRef, seuQuery, returnAnchor = FALSE){
+  # --- Loads marker genes from seuWBRef@misc
   markerList   <- seuWBRef@misc$markerList     # celltype specific markers
   markerList.2 <- seuWBRef@misc$markerList.2   # region specific markers for each celltype
   regspe <- seuWBRef@misc$regionSpecificityTb  # conca terms to predicted terms mapping table
 
   # - Step1: Calculates module score for celltype and region (for all cells)
-  # --- Loads marker genes from seuWBRef@misc
-  seuQuery <- AddModuleScore(seuQuery, assay = "RNA", features = markerList, name = "celltypeScore")
+  # find celltype X, whose markers do not exist in the query
+  celltype.del <- unique(lapply(names(markerList), 
+                                FUN = function(x){if(!any(markerList[[x]] %in% Features(seuQuery))){return(x)}}) %>% unlist())
+  seuQuery <- AddModuleScore(seuQuery, assay = "RNA", features = markerList[!names(markerList) %in% celltype.del], name = "celltypeScore") 
   colnames(seuQuery@meta.data)[grep(pattern = "^celltypeScore", x = colnames(seuQuery@meta.data))] <-
-    paste0("score_", names(markerList)) # need to deal with case where none of the markers exists in seuQuery
+    paste0("score_", names(markerList)[!names(markerList) %in% celltype.del]) # skip celltype X for module score calculation
   seuQuery <- AddModuleScore(seuQuery, assay = "RNA", features = markerList.2, name = "regScore")
   colnames(seuQuery@meta.data)[grep(pattern = "^regScore", x = colnames(seuQuery@meta.data))] <-
     paste0("regScore_", names(markerList.2))
@@ -64,6 +67,7 @@ mapToWB <- function(seuWBRef, seuQuery, returnAnchor = FALSE){
   tmpMeta[["is.assigned"]] <- "unassigned"
   for(i in 1:nrow(tmpMeta)){
     predicted.celltype <- tmpMeta[["predicted.celltype"]][i]
+    if(predicted.celltype %in% celltype.del){next} # celltype X to be always unassigned
     if(tmpMeta[[paste0("score_", predicted.celltype)]][i] > 0){
       tmpMeta[["is.assigned"]][i] <- "assigned"
     }

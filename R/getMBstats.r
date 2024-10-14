@@ -62,11 +62,13 @@ getMBstats <- function(seu, group.by){
   for(iGrp in levels(seu$group)){
     seuSUB <- subset(seu, group == iGrp)
     Idents(seuSUB) <- factor(seuSUB$predicted.MB.celltype)
-    for(iCT in names(which(table(Idents(seuSUB)) >= 5))){
-      tmp = FoldChange(seuSUB, ident.1 = iCT)
-      tmp = data.table(group = iGrp, celltype = iCT, 
-                       gene = rownames(tmp), tmp)
-      inpFC = rbindlist(list(inpFC, tmp))
+    if(uniqueN(Idents(seuSUB)) >= 2){
+      for(iCT in names(which(table(Idents(seuSUB)) >= 5))){
+        tmp = FoldChange(seuSUB, ident.1 = iCT)
+        tmp = data.table(group = iGrp, celltype = iCT, 
+                         gene = rownames(tmp), tmp)
+        inpFC = rbindlist(list(inpFC, tmp))
+      }
     }
   }
   inpFC$group = factor(inpFC$group, levels = levels(seu$group))
@@ -79,17 +81,19 @@ getMBstats <- function(seu, group.by){
   rownames(oup6) <- levels(markers$cluster)
   colnames(oup6) <- colnames(oup1)
   for(iGrp in levels(inpFC$group)){
-    for(iCT in levels(inpFC$celltype)){
-      inp <- inpFC[group == iGrp][celltype == iCT]
-      if(nrow(inp) > 0){
-        inpinp <- inp$avg_log2FC
-        names(inpinp) <- inp$gene
-        inpinp <- sort(inpinp, decreasing = T)
-        tmpOut <- GSEA(inpinp, TERM2GENE = markers, minGSSize = 5,
-                       verbose = FALSE, pvalueCutoff = 1)
-        tmpOut <- data.table(data.frame(tmpOut))
-        tmpOut <- tmpOut[ID == iCT]
-        if(nrow(tmpOut) == 1){oup6[iCT, iGrp] = tmpOut$NES}
+    if(nrow(inpFC[group == iGrp]) > 0){
+      for(iCT in levels(inpFC$celltype)){
+        inp <- inpFC[group == iGrp][celltype == iCT]
+        if(nrow(inp) > 0){
+          inpinp <- inp$avg_log2FC
+          names(inpinp) <- inp$gene
+          inpinp <- sort(inpinp, decreasing = T)
+          tmpOut <- GSEA(inpinp, TERM2GENE = markers, minGSSize = 5,
+                         verbose = FALSE, pvalueCutoff = 1)
+          tmpOut <- data.table(data.frame(tmpOut))
+          tmpOut <- tmpOut[ID == iCT]
+          if(nrow(tmpOut) == 1){oup6[iCT, iGrp] = tmpOut$NES}
+        }
       }
     }
   }

@@ -4,10 +4,16 @@
 \alias{plotWBstats}
 \title{Plot statistics for the first-tier mapping using \code{ComplexHeatmap}}
 \usage{
-plotWBstats(inpMat, no.legend = FALSE)
+plotWBstats(inpMat, plot = c(1, 2, 3, 4), no.legend = FALSE)
 }
 \arguments{
-\item{inpMat}{A matrix from \code{getWBstats()}.}
+\item{inpMat}{A matrix from \code{getWBstats()}}
+
+\item{plot}{blocks of the plots to be printed, i.e. c(1,2,3,4)
+1: the proportion of confidently assigned and unassigned cells from the first-tier mapping
+2: the region.lineage proportions for confidently assigned cells
+3: the cell type proportions for confidently assigned cells
+4: detail the brain region proportions for confidently assigned DA neurons}
 
 \item{no.legend}{If true, a heatmap without legend is returned}
 }
