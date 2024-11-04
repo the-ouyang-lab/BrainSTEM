@@ -2,12 +2,13 @@
 #' 
 #' Plot statistics for the first-tier mapping using \code{ComplexHeatmap} (Fig 3)
 #' 
-#' @param inpMat A matrix from \code{getWBstats()}
+#' @param inpMat A matrix from \code{getWBstats()}, or a list of multiple matrices. If names detected in the list, they are shown in the legend as study names.
 #' @param plot blocks of the plots to be printed, i.e. c(1,2,3,4)
 #' 1: the proportion of confidently assigned and unassigned cells from the first-tier mapping
 #' 2: the region.lineage proportions for confidently assigned cells
 #' 3: the cell type proportions for confidently assigned cells
 #' 4: detail the brain region proportions for confidently assigned DA neurons
+#' @param show.manno Display an in vivo fetal midbrain dataset published by La Manno 2016 for comparison.
 #' @param no.legend If true, a heatmap without legend is returned
 #' 
 #' @return A heatmap constructed using \code{ComplexHeatmap}
@@ -19,7 +20,12 @@
 #' @import data.table
 #' @export
 
-plotWBstats <- function(inpMat, plot = c(1,2,3,4), no.legend = FALSE){
+plotWBstats <- function(inpMat, plot = c(1,2,3,4), show.manno = FALSE, no.legend = FALSE){
+  colDat <- c("#e8b571", "#cc1e32", "#f2e291", "#71d4e8", "#e88fd7", 
+              "#db53c2", "#ca75f4", "#047a60", "#cc262c", "#3c67ad",
+              "#05af2a", "#66e8e3", "#d4ed84", "#898dff", "#ace03c",
+              "#1a737f", "#dd4042", "#36c497", "#dd6aaf", "#7f71dd")
+  
   colWB1 <- c("#043259", "#BBBBBB")
   names(colWB1) <- c("assigned", "unassigned")
   colWB2 <- c("#d42f2f", "#d48c8c", "#16b87d","#b5e8d5", "#0b5394", "#6fa8dc", 
@@ -36,21 +42,80 @@ plotWBstats <- function(inpMat, plot = c(1,2,3,4), no.legend = FALSE){
   colWB4 <- c("#d42f2f", "#16b87d", "#0b5394")
   names(colWB4) <- c("Midbrain.DA N", "Forebrain.DA N", "Hindbrain.DA N")
   
-  if (nrow(inpMat) != 37){
-    stop("The input matrix should contain 37 rows.")
+  if (is.list(inpMat)){
+    
+    if (unique(unlist(lapply(inpMat, nrow))) != 37){
+      stop("The input matrix should contain 37 rows.")
+    }
+    
+    oupAll <- do.call(cbind, inpMat)
+    oupAll[is.nan(oupAll)] <- 0
+    show.study <- TRUE
+    
+  } else {
+    
+    if (nrow(inpMat) != 37){
+      stop("The input matrix should contain 37 rows.")
+    }
+    
+    oupAll <- inpMat
+    oupAll[is.nan(oupAll)] <- 0
+    show.study <- FALSE
   }
+  
+  if (isTRUE(show.manno)){
+    mannoWBstats <- read.csv(system.file("extdata", "mannoWBstats.csv", package = "BrainSTEM"), row.name = 1) %>% as.matrix()
+    show.study <- TRUE
+    if (is.list(inpMat)){
+      inpMat <- c(list("La Manno 2016" = mannoWBstats),
+                  inpMat)
+      
+    } else {
+      inpMat <- list("La Manno 2016" = mannoWBstats,
+                     inpMat)
+    }
+    oupAll <- cbind(mannoWBstats, oupAll)
+  }
+  
+  if (isTRUE(show.study)){
+    
+    if (!is.null(names(inpMat))){
+      studyname <- names(inpMat)
+      for (i in seq_along(studyname)){
+        if (studyname[i] == ""){
+          studyname[i] <- paste0("Dataset ", i)
+        }
+      }
+    } else {
+      studyname <- paste0("Dataset ", seq_len(length(inpMat)))
+    }
+    colDat <- colDat[seq_along(studyname)]
+    names(colDat) <- studyname
+    
+    grpByDataset <- sapply(seq_along(studyname), function(x) return(rep(studyname[x], ncol(inpMat[[x]]))), USE.NAMES = FALSE) %>% do.call(c,.)
+    grpByDataset <- factor(grpByDataset, levels = unique(grpByDataset))
+    listDataset  = list(); for(iD in unique(grpByDataset)){listDataset[[iD]] = which(grpByDataset == iD)}
+    
+  }
+    
   if (!all(plot %in% c(1, 2, 3, 4))) {
     stop("\"plot\" must contain only values 1, 2, 3, and/or 4.")
   }
-  oupAll <- inpMat
-  oupAll[is.nan(oupAll)] <- 0
+  
   
   # fontsize
   fs1 <- 14
   fs2 <- 12
-  fs3 <- 8
+  
   # Main plot
   ht_list = NULL
+  if (isTRUE(show.study)){
+    ht_list = ht_list %v% HeatmapAnnotation(
+      empty = anno_empty(border = FALSE),
+      dataset = anno_block(align_to = listDataset, panel_fun = function(index, levels) {
+        grid.rect(gp = gpar(fill = colDat[levels], col = "black"))
+      }), show_legend = TRUE)
+  }
   if (1 %in% plot){
     ht_list = ht_list %v%
       HeatmapAnnotation("proportion of cells\nassigned" = anno_barplot(
@@ -90,11 +155,20 @@ plotWBstats <- function(inpMat, plot = c(1,2,3,4), no.legend = FALSE){
   ht_list = ht_list %v%
     columnAnnotation(text = anno_text(colnames(oupAll), rot = 45, gp = gpar(fontsize = fs2))) %v% 
     Heatmap(matrix(ncol = ncol(oupAll), nrow = 1), name = "total cells", 
+            column_split = if(isTRUE(show.study)) grpByDataset else NULL, 
+            column_gap = if(isTRUE(show.study)) unit(2, "mm") else NULL, 
             height = unit(0, "npc"),
             column_title = NULL, show_row_names = FALSE, show_heatmap_legend = FALSE,
             cluster_rows = FALSE, cluster_columns = FALSE)
+  
+    
   # legends
   lgd_list = list()
+  if (isTRUE(show.study)){
+    lgd_list = c(lgd_list, list(
+    Legend(labels = studyname, legend_gp = gpar(fill = colDat), title = "study", labels_gp = gpar(fontsize = fs2), ncol = ifelse(length(studyname) <= 6, 1, 2), title_gp = gpar(fontsize = fs1, fontface = "bold"))
+    ))
+  }
   if (1 %in% plot){
     lgd_list = c(lgd_list, list(
       Legend(labels = rev(names(colWB1)), legend_gp = gpar(fill = rev(colWB1)), title = "assignment", labels_gp = gpar(fontsize = fs2), title_gp = gpar(fontsize = fs1, fontface = "bold"))

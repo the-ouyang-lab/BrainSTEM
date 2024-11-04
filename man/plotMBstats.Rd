@@ -4,10 +4,15 @@
 \alias{plotMBstats}
 \title{Plot statistics for the second-tier projection using \code{ComplexHeatmap}}
 \usage{
-plotMBstats(inpMat, plot = c(1, 2, 3, 4, 5, 6), no.legend = FALSE)
+plotMBstats(
+  inpMat,
+  plot = c(1, 2, 3, 4, 5, 6),
+  show.manno = FALSE,
+  no.legend = FALSE
+)
 }
 \arguments{
-\item{inpMat}{A matrix from \code{getMBstats()}}
+\item{inpMat}{A matrix from \code{getMBstats()}, or a list of multiple matrices. If names detected in the list, they are shown in the legend as study names.}
 
 \item{plot}{blocks of the plots to be printed, i.e. c(1,2,3,4,5,6)
 1: midbrain celltype proportion
@@ -16,6 +21,8 @@ plotMBstats(inpMat, plot = c(1, 2, 3, 4, 5, 6), no.legend = FALSE)
 4: ventral score
 5: the correlation between midbrain celltype proportion of current query dataset and that reported by La Manno 2016
 6: midbrain celltype identity NES}
+
+\item{show.manno}{Display an in vivo fetal midbrain dataset published by La Manno 2016 for comparison.}
 
 \item{no.legend}{If true, a heatmap without legend is returned}
 }
